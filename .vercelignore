@@ -1,0 +1,6 @@
+.git
+backend/node_modules
+backend/data
+backend/test
+google-apps-script
+*.log

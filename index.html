@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Task and Project Tracker</title>
+<!-- Tab icon: the BRAC mark, instead of the browser's default globe -->
+<link rel="icon" href="assets/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="assets/icon.png?v=26" sizes="any">
+<link rel="apple-touch-icon" href="assets/icon-180.png?v=26">
+<script>/* apply the saved theme before first paint: light | dark | ocean */
+(function(){var t='';try{t=localStorage.getItem('tracker.theme')||localStorage.getItem('mftech.theme')||''}catch(e){}if(!/^(light|dark|ocean)$/.test(t))t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';var h=document.documentElement;h.setAttribute('data-theme',t);h.setAttribute('data-bs-theme',t==='dark'?'dark':'light')})();
+/* if a script cannot even be parsed (very old browser), say so instead of leaving a blank page */
+window.addEventListener('error',function(e){if(window.__appReady)return;var v=document.getElementById('v');if(!v||v.querySelector('.compat'))return;
+ v.innerHTML='<div class="compat" style="max-width:560px;margin:40px auto;padding:20px;border-radius:14px;background:#fff3cd;color:#664d03;font-family:system-ui,sans-serif;line-height:1.5"><b>This browser could not run the tracker.</b><br>Please update the browser (Chrome, Edge, Safari or Firefox from 2020 or newer) or open the link on another device.<br><small style="opacity:.7">'+((e&&e.message)||'')+'</small></div>'});</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<!-- Bootstrap 5.3.3 is served from the project's vendor folder so the page also works offline -->
+<link rel="stylesheet" href="vendor/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css?v=26">
+</head>
+<body>
+<noscript><div style="padding:20px;font-family:system-ui,sans-serif">The tracker needs JavaScript. Please enable it in your browser settings.</div></noscript>
+
+<header class="hero d-flex flex-wrap align-items-center justify-content-between gap-3 px-4 py-3">
+  <div class="hero-fx"></div>
+  <div class="d-flex flex-wrap align-items-center gap-3">
+    <div class="logo"><img src="assets/logo.png" alt="BRAC"></div>
+    <div>
+      <h1 class="mb-1">Infrastructure &amp; Support | Technology | Microfinance <br><span>Task and Project Tracker</span></h1>
+      <div class="live" id="lv"><i></i><span id="snap">Connecting…</span></div>
+    </div>
+  </div>
+  <!-- Everything lives behind one Settings menu, and only once somebody is signed in:
+       the sign-in page carries no controls at all. -->
+  <div class="d-flex flex-wrap align-items-center gap-2">
+    <div id="who" class="who d-none"></div>
+    <div class="dropdown d-none" id="settings">
+      <button class="btn btn-glass dropdown-toggle" id="st" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Settings">⚙ Settings</button>
+      <ul class="dropdown-menu dropdown-menu-end shadow settings-menu" id="stm"></ul>
+    </div>
+  </div>
+</header>
+
+<ul class="nav nav-pills flex-nowrap overflow-auto gap-1 container-xxl px-3 px-md-4 pt-3" id="nav"></ul>
+<main class="container-xxl px-3 px-md-4 pb-5" id="v"></main>
+
+<!-- Chat lives in a floating button at the bottom right, with a popup panel.
+     Both are hidden until somebody is signed in. -->
+<div class="chat-dock d-none" id="chatdock">
+  <div class="chat-scrim" id="chatscrim" hidden></div>
+  <section class="chat-pop" id="chatpop" role="dialog" aria-label="Chat" aria-hidden="true" hidden>
+    <header class="chat-pop-head">
+      <button class="chat-back" id="c_back" aria-label="Back to colleagues" hidden>‹</button>
+      <div class="chat-pop-title" id="c_head"><b>Chat</b><span>Message a colleague directly</span></div>
+      <span class="chat-live" id="c_state">○ Offline</span>
+      <button class="chat-x" id="c_close" aria-label="Close chat">✕</button>
+    </header>
+    <div class="chat-pop-note" id="c_note" hidden></div>
+    <div class="chat-pop-body">
+      <div class="chat-side" id="c_side">
+        <input class="form-control form-control-sm" id="c_search" placeholder="Search colleagues…" autocomplete="off">
+        <div class="chat-people" id="c_list"></div>
+      </div>
+      <div class="chat-convo" id="c_convo">
+        <div class="chat-log" id="c_log"></div>
+        <div class="chat-foot">
+          <div class="chat-typing" id="c_typing">&nbsp;</div>
+          <div class="input-group">
+            <input class="form-control" id="c_msg" placeholder="Write a message…" autocomplete="off" disabled maxlength="4000">
+            <button class="btn btn-brand" id="c_send" disabled aria-label="Send">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <button class="chat-fab" id="chatfab" aria-label="Open chat" aria-expanded="false">
+    <span class="fab-icon">💬</span>
+    <span class="fab-badge" id="c_fabbadge" hidden>0</span>
+  </button>
+</div>
+
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" id="toasts"></div>
+
+<script src="vendor/bootstrap.bundle.min.js"></script>
+<script src="config/users.js?v=26"></script>
+<script src="js/model.js?v=26"></script>
+<script src="js/view.js?v=26"></script>
+<script src="js/export.js?v=26"></script>
+<!-- The Google Sheet behind this Apps Script deployment. The page checks it on start-up and
+     uses it as soon as it answers; until then everything stays in this browser. -->
+<script>window.GAS_URL='https://script.google.com/macros/s/AKfycbxPCgPYtOUpyYefpOzLcK_u-un1S5wSzyj-khjHHpLTpRPI4JGT17zz4IMyflENVfCn/exec';</script>
+<script src="js/gsheet.js?v=26"></script>
+<!-- Node.js server in server/ – used automatically when it answers at /api/health -->
+<script src="js/api.js?v=26"></script>
+<!-- Chat, when the Node.js backend is running: Socket.IO is fetched from that server -->
+<script src="js/chat.js?v=26"></script>
+<script src="js/presenter.js?v=26"></script>
+</body>
+</html>

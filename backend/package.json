@@ -1,0 +1,23 @@
+{
+  "name": "task-tracker-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node.js backend for the Infrastructure & Support Task and Project Tracker: auth, roles, users, items, exports and audit log.",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning src/index.js",
+    "dev": "node --no-warnings=ExperimentalWarning --watch src/index.js",
+    "test": "node --no-warnings=ExperimentalWarning --test",
+    "reset": "node --no-warnings=ExperimentalWarning scripts/reset.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
+  }
+}

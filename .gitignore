@@ -1,0 +1,10 @@
+.vercel/
+node_modules/
+server/data/
+server/.env
+*.log
+server/node_modules/
+server/package-lock.json
+server/service-account.json
+
+.env*

@@ -1,0 +1,16 @@
+{
+  "framework": null,
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "functions": {
+    "api/[...path].js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/[...path]"
+    }
+  ]
+}
